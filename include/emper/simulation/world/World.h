@@ -1,7 +1,10 @@
 #ifndef EMPER_SIMULATION_WORLD_WORLD_H
 #define EMPER_SIMULATION_WORLD_WORLD_H
 
+#pragma once
+
 #include <cstddef>
+#include <functional>
 #include <memory>
 #include <typeindex>
 #include <typeinfo>
@@ -10,6 +13,7 @@
 #include <vector>
 
 #include <emper/Types.h>
+#include <emper/interfaces/backend/IRenderer.h>
 #include <emper/simulation/storage/Field.h>
 #include <emper/simulation/storage/Handle.h>
 #include <emper/simulation/storage/Storage.h>
@@ -23,16 +27,22 @@ namespace emper
 class World
 {
 public:
-template<typename T>
-storage::FieldBuilder<T> registerType()
-{
-    return storage::FieldBuilder<T>(
-        [this](std::unique_ptr<storage::TypeStorage<T>> typedStorage)
-        {
-            this->commitStorage<T>(std::move(typedStorage));
-        }
-    );
-}
+    template<typename T>
+    storage::FieldBuilder<T> registerType()
+    {
+        return storage::FieldBuilder<T>(
+            [this](std::unique_ptr<storage::TypeStorage<T>> typedStorage)
+            {
+                this->commitStorage<T>(std::move(typedStorage));
+            },
+            [this](std::function<void(storage::StorageView<T>&,
+                                      float,
+                                      interfaces::backend::IRenderer*)> fn)
+            {
+                this->setOnTick<T>(std::move(fn));
+            }
+        );
+    }
 
     template<typename T>
     void reserve(std::size_t count)
@@ -96,6 +106,44 @@ storage::FieldBuilder<T> registerType()
         return storage::StorageView<T>(getStorage<T>());
     }
 
+    // Hook a renderer so onTick callbacks can both update (using the
+    // renderer for surface info) and draw. Set by Simulation.
+    void setRenderer(interfaces::backend::IRenderer* renderer)
+    {
+        renderer_ = renderer;
+    }
+
+    // Update pass: invoke every registered type's onTick with dt > 0.
+    // The renderer (if any) is forwarded so callbacks can query surface
+    // size, but no draw calls should be issued here (they would be
+    // cleared by the render pass that follows).
+    void tick(f32 dt)
+    {
+        for (auto& [key, storage] : storages_)
+        {
+            const auto it = onTicks_.find(key);
+            if (it != onTicks_.end() && it->second)
+            {
+                it->second->invoke(storage.get(), dt, renderer_);
+            }
+        }
+    }
+
+    // Render pass: invoke every registered type's onTick with dt == 0
+    // and the active renderer, so callbacks can issue draw calls between
+    // beginFrame()/endFrame().
+    void render(interfaces::backend::IRenderer& renderer)
+    {
+        for (auto& [key, storage] : storages_)
+        {
+            const auto it = onTicks_.find(key);
+            if (it != onTicks_.end() && it->second)
+            {
+                it->second->invoke(storage.get(), 0.0f, &renderer);
+            }
+        }
+    }
+
     std::size_t objectCount() const
     {
         return object_count_;
@@ -129,7 +177,48 @@ private:
         return static_cast<storage::TypeStorage<T>*>(it->second.get());
     }
 
+    // Type-erased dispatcher for a registered type's onTick callback.
+    struct ITypeTick
+    {
+        virtual ~ITypeTick() = default;
+        virtual void invoke(storage::TypeStorageBase* storage,
+                            f32 dt,
+                            interfaces::backend::IRenderer* renderer) = 0;
+    };
+
+    template<typename T>
+    struct TypeTick final : ITypeTick
+    {
+        std::function<void(storage::StorageView<T>&,
+                           f32,
+                           interfaces::backend::IRenderer*)> fn;
+
+        void invoke(storage::TypeStorageBase* storage,
+                    f32 dt,
+                    interfaces::backend::IRenderer* renderer) override
+        {
+            auto* typed = static_cast<storage::TypeStorage<T>*>(storage);
+            storage::StorageView<T> view(typed);
+            if (fn)
+            {
+                fn(view, dt, renderer);
+            }
+        }
+    };
+
+    template<typename T>
+    void setOnTick(std::function<void(storage::StorageView<T>&,
+                                    f32,
+                                    interfaces::backend::IRenderer*)> fn)
+    {
+        auto tick = std::make_unique<TypeTick<T>>();
+        tick->fn = std::move(fn);
+        onTicks_[std::type_index(typeid(T))] = std::move(tick);
+    }
+
     std::unordered_map<std::type_index, std::unique_ptr<storage::TypeStorageBase>> storages_;
+    std::unordered_map<std::type_index, std::unique_ptr<ITypeTick>> onTicks_;
+    interfaces::backend::IRenderer* renderer_ = nullptr;
     std::size_t object_count_ = 0;
     WorldStatistics statistics_;
 };

@@ -18,6 +18,21 @@ void Simulation::shutdown()
     running_ = false;
 }
 
+void Simulation::update(f32 dt)
+{
+    world_.tick(dt);
+}
+
+void Simulation::render()
+{
+    if (!renderer_)
+        return;
+
+    renderer_->beginFrame();
+    world_.render(*renderer_);
+    renderer_->endFrame();
+}
+
 bool Simulation::isRunning() const
 {
     return running_;
@@ -28,8 +43,10 @@ void Simulation::requestStop()
     running_ = false;
 }
 
-void Simulation::tick()
+void Simulation::tick(f32 dt)
 {
+    update(dt);
+    render();
 }
 
 World& Simulation::world()
