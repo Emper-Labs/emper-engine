@@ -1,7 +1,10 @@
 #ifndef EMPER_INTERFACES_BACKEND_RENDERER
 #define EMPER_INTERFACES_BACKEND_RENDERER
 
-namespace emper::interfaces::backend{
+#include <emper/Types.h>
+
+namespace emper::interfaces::backend {
+
 class IRenderer {
 public:
     virtual ~IRenderer() = default;
@@ -10,10 +13,12 @@ public:
 
     virtual void beginFrame() = 0;
 
-    virtual void drawPoint(float x, float y) = 0;
-    virtual void drawLine(float x1, float y1,
-                          float x2, float y2) = 0;
-    virtual void drawCircle(float x, float y, float radius) = 0;
+    // Colors use the 0xRRGGBBAA layout.
+    virtual void drawPoint(f32 x, f32 y, u32 color = 0x3399FFFF) = 0;
+    virtual void drawLine(f32 x1, f32 y1,
+                          f32 x2, f32 y2, u32 color = 0x3399FFFF) = 0;
+    virtual void drawCircle(f32 x, f32 y, f32 radius,
+                            u32 color = 0x3399FFFF) = 0;
 
     virtual void endFrame() = 0;
 
@@ -22,6 +27,6 @@ public:
     virtual int windowWidth() const { return 0; }
     virtual int windowHeight() const { return 0; }
 };
-}
+} // namespace emper::interfaces::backend
 
-#endif//EMPER_INTERFACES_BACKEND_RENDERER
+#endif // EMPER_INTERFACES_BACKEND_RENDERER
