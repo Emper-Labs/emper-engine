@@ -4,12 +4,32 @@
 #include <emper/Types.h>
 
 namespace emper::interfaces::backend {
+class IRenderer;
+}
+
+namespace emper::interfaces::behavior{
+
+class IRenderable
+{
+public:
+    virtual ~IRenderable() = default;
+
+    virtual void render(
+        emper::interfaces::backend::IRenderer& renderer
+    ) = 0;
+};
+
+};
+
+namespace emper::interfaces::backend {
 
 class IRenderer {
 public:
     virtual ~IRenderer() = default;
     
     virtual bool processEvents() = 0;
+
+    virtual f32 frameDeltaSeconds() { return 1.0f / 60.0f; }
 
     virtual void beginFrame() = 0;
 

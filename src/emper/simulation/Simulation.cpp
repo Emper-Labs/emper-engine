@@ -1,5 +1,7 @@
 #include <emper/simulation/Simulation.h>
 
+#include <algorithm>
+
 namespace emper
 {
 
@@ -49,12 +51,33 @@ void Simulation::tick(f32 dt)
     render();
 }
 
-World& Simulation::world()
+bool Simulation::tick()
+{
+    if (!running_)
+    {
+        return false;
+    }
+
+    if (renderer_ && !renderer_->processEvents())
+    {
+        requestStop();
+        return false;
+    }
+
+    const f32 dt = renderer_
+        ? std::clamp(renderer_->frameDeltaSeconds(), 0.0f, 0.05f)
+        : 1.0f / 60.0f;
+
+    tick(dt);
+    return running_;
+}
+
+emper::simulation::world::World& Simulation::world()
 {
     return world_;
 }
 
-const World& Simulation::world() const
+const emper::simulation::world::World& Simulation::world() const
 {
     return world_;
 }

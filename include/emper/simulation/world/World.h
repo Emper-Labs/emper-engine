@@ -20,8 +20,9 @@
 #include <emper/simulation/storage/StorageView.h>
 #include <emper/simulation/storage/View.h>
 #include <emper/simulation/world/WorldStatistics.h>
+#include <emper/interfaces/module/ISystem.h>
 
-namespace emper
+namespace emper::simulation::world
 {
 
 class World
@@ -113,6 +114,19 @@ public:
         renderer_ = renderer;
     }
 
+    void addSystem(interfaces::module::ISystem* system)
+    {
+        if (system)
+        {
+            systems_.push_back(system);
+        }
+    }
+
+    void addSysem(interfaces::module::ISystem* system)
+    {
+        addSystem(system);
+    }
+
     // Update pass: invoke every registered type's onTick with dt > 0.
     // The renderer (if any) is forwarded so callbacks can query surface
     // size, but no draw calls should be issued here (they would be
@@ -127,6 +141,10 @@ public:
                 it->second->invoke(storage.get(), dt, renderer_);
             }
         }
+
+        for(auto* system : systems_){
+            system->tick(dt);
+        }
     }
 
     // Render pass: invoke every registered type's onTick with dt == 0
@@ -140,6 +158,14 @@ public:
             if (it != onTicks_.end() && it->second)
             {
                 it->second->invoke(storage.get(), 0.0f, &renderer);
+            }
+        }
+
+        for (auto&system : systems_)
+        {
+            if (auto* renderable = dynamic_cast<emper::interfaces::behavior::IRenderable*>(system))
+            {
+                renderable->render(renderer);
             }
         }
     }
@@ -218,6 +244,7 @@ private:
 
     std::unordered_map<std::type_index, std::unique_ptr<storage::TypeStorageBase>> storages_;
     std::unordered_map<std::type_index, std::unique_ptr<ITypeTick>> onTicks_;
+    std::vector<emper::interfaces::module::ISystem*> systems_;
     interfaces::backend::IRenderer* renderer_ = nullptr;
     std::size_t object_count_ = 0;
     WorldStatistics statistics_;

@@ -2,7 +2,7 @@
 
 #include <cstddef>
 
-namespace emper
+namespace emper::simulation::world
 {
 
 struct WorldStatistics

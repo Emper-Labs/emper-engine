@@ -28,13 +28,15 @@ public:
 
     void tick(f32 dt);
 
+    bool tick();
+
     void update(f32 dt);
 
     void render();
 
-    World& world();
+    emper::simulation::world::World& world();
 
-    const World& world() const;
+    const emper::simulation::world::World& world() const;
 
     void setRenderer(emper::interfaces::backend::IRenderer* renderer)
     {
@@ -48,7 +50,7 @@ public:
     }
 
 private:
-    World world_;
+    emper::simulation::world::World world_;
     bool running_ = false;
     emper::interfaces::backend::IRenderer* renderer_ = nullptr;
 };
