@@ -1,7 +1,8 @@
-#ifndef EMPER_INTERFACES_BACKEND_RENDERER
-#define EMPER_INTERFACES_BACKEND_RENDERER
+#ifndef EMPER_INTERFACES_BACKEND_IRENDERER
+#define EMPER_INTERFACES_BACKEND_IRENDERER
 
-#include <emper/Types.h>
+#define GPU_BACK_END
+#include <emper/ComputeTypes.h>
 
 namespace emper::interfaces::backend {
 class IRenderer;
@@ -22,6 +23,34 @@ public:
 };
 
 namespace emper::interfaces::backend {
+
+class IRendererShaderPipeLine //<- cái này chỉ test sau sẽ thêm vào cho engine
+{
+public:
+    virtual ~IRendererShaderPipeLine() = default;
+
+    virtual ProgramHandle createGraphicsProgram(
+        const std::string& vertex,
+        const std::string& fragment
+    ) = 0;
+
+    virtual void destroyProgram(
+        ProgramHandle program
+    ) = 0;
+
+    virtual void bindProgram(
+        ProgramHandle program
+    ) = 0;
+
+    virtual void bindStorageBuffer(
+        u32 binding,
+        BufferHandle buffer
+    ) = 0;
+
+    virtual void drawPoints(
+        u32 count
+    ) = 0;
+};
 
 class IRenderer {
 public:
@@ -49,4 +78,4 @@ public:
 };
 } // namespace emper::interfaces::backend
 
-#endif // EMPER_INTERFACES_BACKEND_RENDERER
+#endif // EMPER_INTERFACES_BACKEND_IRENDERER

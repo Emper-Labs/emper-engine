@@ -24,6 +24,7 @@ struct Vec2
     f32 y = 0.0f;
 };
 
+
 } // namespace emper
 
 #endif // EMPER_TYPES_H
