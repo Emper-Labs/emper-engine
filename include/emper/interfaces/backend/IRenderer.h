@@ -24,10 +24,10 @@ public:
 
 namespace emper::interfaces::backend {
 
-class IRendererShaderPipeLine //<- cái này chỉ test sau sẽ thêm vào cho engine
+class IRendererShaderPipeline
 {
 public:
-    virtual ~IRendererShaderPipeLine() = default;
+    virtual ~IRendererShaderPipeline() = default;
 
     virtual ProgramHandle createGraphicsProgram(
         const std::string& vertex,
