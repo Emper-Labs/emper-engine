@@ -58,7 +58,7 @@ public:
     
     virtual bool processEvents() = 0;
 
-    virtual f32 frameDeltaSeconds() { return 1.0f / 60.0f; }
+    virtual f32 frameDeltaSeconds();
 
     virtual void beginFrame() = 0;
 
@@ -68,13 +68,19 @@ public:
                           f32 x2, f32 y2, u32 color = 0x3399FFFF) = 0;
     virtual void drawCircle(f32 x, f32 y, f32 radius,
                             u32 color = 0x3399FFFF) = 0;
+    virtual void drawText(
+        std::string_view text,
+        f32 x,
+        f32 y,
+        f32 size
+    ) = 0;
 
     virtual void endFrame() = 0;
 
     // Current drawable surface dimensions. Defaults to 0 so headless/
     // mock renderers compile without overriding them.
-    virtual int windowWidth() const { return 0; }
-    virtual int windowHeight() const { return 0; }
+    virtual int windowWidth() const;
+    virtual int windowHeight() const;
 };
 } // namespace emper::interfaces::backend
 

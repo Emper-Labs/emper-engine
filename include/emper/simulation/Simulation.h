@@ -38,16 +38,9 @@ public:
 
     const emper::simulation::world::World& world() const;
 
-    void setRenderer(emper::interfaces::backend::IRenderer* renderer)
-    {
-        renderer_ = renderer;
-        world_.setRenderer(renderer);
-    }
+    void setRenderer(emper::interfaces::backend::IRenderer* renderer);
 
-    emper::interfaces::backend::IRenderer* renderer() const
-    {
-        return renderer_;
-    }
+    emper::interfaces::backend::IRenderer* renderer() const;
 
 private:
     emper::simulation::world::World world_;

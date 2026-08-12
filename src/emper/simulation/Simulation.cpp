@@ -82,4 +82,15 @@ const emper::simulation::world::World& Simulation::world() const
     return world_;
 }
 
+void Simulation::setRenderer(emper::interfaces::backend::IRenderer* renderer)
+{
+    renderer_ = renderer;
+    world_.setRenderer(renderer);
+}
+
+emper::interfaces::backend::IRenderer* Simulation::renderer() const
+{
+    return renderer_;
+}
+
 } // namespace emper

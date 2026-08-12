@@ -21,8 +21,8 @@ protected:
     ISystemConfig config_;
 public:
     virtual ~ISystem() = default;
-    void setConfig(const ISystemConfig& config){config_ = config;}
-    ISystemConfig getConfig() const {return config_;}
+    void setConfig(const ISystemConfig& config);
+    ISystemConfig getConfig() const;
 
     virtual void tick(f32 dt) = 0;
 };

@@ -107,78 +107,14 @@ public:
         return storage::StorageView<T>(getStorage<T>());
     }
 
-    // Hook a renderer so onTick callbacks can both update (using the
-    // renderer for surface info) and draw. Set by Simulation.
-    void setRenderer(interfaces::backend::IRenderer* renderer)
-    {
-        renderer_ = renderer;
-    }
+    void setRenderer(interfaces::backend::IRenderer* renderer);
+    void addSystem(interfaces::module::ISystem* system);
 
-    void addSystem(interfaces::module::ISystem* system)
-    {
-        if (system)
-        {
-            systems_.push_back(system);
-        }
-    }
+    void tick(f32 dt);
+    void render(interfaces::backend::IRenderer& renderer);
 
-    void addSysem(interfaces::module::ISystem* system)
-    {
-        addSystem(system);
-    }
-
-    // Update pass: invoke every registered type's onTick with dt > 0.
-    // The renderer (if any) is forwarded so callbacks can query surface
-    // size, but no draw calls should be issued here (they would be
-    // cleared by the render pass that follows).
-    void tick(f32 dt)
-    {
-        for (auto& [key, storage] : storages_)
-        {
-            const auto it = onTicks_.find(key);
-            if (it != onTicks_.end() && it->second)
-            {
-                it->second->invoke(storage.get(), dt, renderer_);
-            }
-        }
-
-        for(auto* system : systems_){
-            system->tick(dt);
-        }
-    }
-
-    // Render pass: invoke every registered type's onTick with dt == 0
-    // and the active renderer, so callbacks can issue draw calls between
-    // beginFrame()/endFrame().
-    void render(interfaces::backend::IRenderer& renderer)
-    {
-        for (auto& [key, storage] : storages_)
-        {
-            const auto it = onTicks_.find(key);
-            if (it != onTicks_.end() && it->second)
-            {
-                it->second->invoke(storage.get(), 0.0f, &renderer);
-            }
-        }
-
-        for (auto&system : systems_)
-        {
-            if (auto* renderable = dynamic_cast<emper::interfaces::behavior::IRenderable*>(system))
-            {
-                renderable->render(renderer);
-            }
-        }
-    }
-
-    std::size_t objectCount() const
-    {
-        return object_count_;
-    }
-
-    const WorldStatistics& statistics() const
-    {
-        return statistics_;
-    }
+    std::size_t objectCount() const;
+    const WorldStatistics& statistics() const;
 
 private:
     template<typename T>
@@ -203,7 +139,6 @@ private:
         return static_cast<storage::TypeStorage<T>*>(it->second.get());
     }
 
-    // Type-erased dispatcher for a registered type's onTick callback.
     struct ITypeTick
     {
         virtual ~ITypeTick() = default;
