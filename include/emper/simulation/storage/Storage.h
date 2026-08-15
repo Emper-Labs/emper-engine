@@ -18,7 +18,7 @@ template<auto Member>
 std::size_t memberKey()
 {
     auto ptr = Member;
-    std::size_t key;
+    std::size_t key {};
     static_assert(sizeof(ptr) <= sizeof(key));
     std::memcpy(&key, &ptr, sizeof(ptr));
     return key;
@@ -91,6 +91,11 @@ class TypeStorage : public TypeStorageBase
 
         FieldType& at(std::size_t index)
         {
+            if (index >= data.size())
+            {
+                __debugbreak();
+            }
+
             return data[index];
         }
 
@@ -119,23 +124,37 @@ public:
     {
         using FieldType = MemberType<Member>;
         const auto key = memberKey<Member>();
-        columns_.emplace(key, std::make_unique<Column<FieldType>>());
+        //std::cout << "addField key = " << key << '\n';
+
+        columns_.emplace(
+            key,
+            std::make_unique<Column<FieldType>>()
+        );
     }
 
     template<auto Member>
     MemberType<Member>& get(std::size_t slot)
     {
         const auto key = memberKey<Member>();
-        auto it = columns_.find(key);
-        return static_cast<Column<MemberType<Member>>&>(*it->second).at(slot);
-    }
+        //std::cout << "get key = " << key << '\n';
+        //std::cout << "columns size = " << columns_.size() << '\n';
 
-    template<auto Member>
-    const MemberType<Member>& get(std::size_t slot) const
-    {
-        const auto key = memberKey<Member>();
         auto it = columns_.find(key);
-        return static_cast<const Column<MemberType<Member>>&>(*it->second).at(slot);
+
+        if (it == columns_.end())
+        {
+            __debugbreak();
+        }
+
+        auto* column =
+            static_cast<Column<MemberType<Member>>*>(it->second.get());
+
+        if (slot >= column->size())
+        {
+            __debugbreak();
+        }
+
+        return column->at(slot);
     }
 
     template<auto Member>

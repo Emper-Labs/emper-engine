@@ -11,6 +11,8 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <iostream>
+
 
 #include <emper/Types.h>
 #include <emper/interfaces/backend/IRenderer.h>
@@ -59,13 +61,26 @@ public:
     storage::Handle<T> create()
     {
         auto* storage = getStorage<T>();
+
+        //std::cout << "storage = " << storage << '\n';
+
         if (!storage)
         {
             return {};
         }
-        const auto handle = storage::Handle<T>(storage, storage->create());
+
+        const auto slot = storage->create();
+        /*
+            std::cout << "storage after create = " << storage
+                << ", slot = " << slot << '\n';
+
+        */
+        
+        const auto handle = storage::Handle<T>(storage, slot);
+
         ++object_count_;
         ++statistics_.objectCount;
+
         return handle;
     }
 
