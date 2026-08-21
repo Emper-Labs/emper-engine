@@ -105,9 +105,14 @@ public:
         {
             return;
         }
+
+        std::size_t count = storage->size();
+
         storage->clear();
-        object_count_ = 0;
-        statistics_.objectCount = 0;
+
+        object_count_ -= count;
+
+        statistics_.objectCount = object_count_;
     }
 
     template<typename T>
