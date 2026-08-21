@@ -91,10 +91,10 @@ class TypeStorage : public TypeStorageBase
 
         FieldType& at(std::size_t index)
         {
-            if (index >= data.size())
-            {
-                __debugbreak();
-            }
+            // if (index >= data.size())
+            // {
+            //     __debugbreak();
+            // }
 
             return data[index];
         }
@@ -141,18 +141,18 @@ public:
 
         auto it = columns_.find(key);
 
-        if (it == columns_.end())
-        {
-            __debugbreak();
-        }
+        // if (it == columns_.end())
+        // {
+        //     __debugbreak();
+        // }
 
         auto* column =
             static_cast<Column<MemberType<Member>>*>(it->second.get());
 
-        if (slot >= column->size())
-        {
-            __debugbreak();
-        }
+        // if (slot >= column->size())
+        // {
+        //     __debugbreak();
+        // }
 
         return column->at(slot);
     }
