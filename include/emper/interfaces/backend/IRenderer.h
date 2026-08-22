@@ -63,6 +63,7 @@ public:
     virtual void beginFrame() = 0;
 
     // Colors use the 0xRRGGBBAA layout.
+    
     virtual void drawPoint(f32 x, f32 y, u32 color = 0x3399FFFF) = 0;
     virtual void drawLine(f32 x1, f32 y1,
                           f32 x2, f32 y2, u32 color = 0x3399FFFF) = 0;
@@ -72,7 +73,15 @@ public:
         std::string_view text,
         f32 x,
         f32 y,
-        f32 size
+        f32 size,
+        u32 color = 0xFFFFFFFF
+    ) = 0;
+    virtual void drawRect(
+        f32 x,
+        f32 y,
+        f32 width,
+        f32 height,
+        u32 color = 0xFFFFFFFF
     ) = 0;
 
     virtual void endFrame() = 0;
