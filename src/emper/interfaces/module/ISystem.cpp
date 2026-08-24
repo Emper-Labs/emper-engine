@@ -2,12 +2,14 @@
 
 namespace emper::interfaces::module {
 
-void ISystem::setConfig(const ISystemConfig& config)
+void 
+ISystem::setConfig(const ISystemConfig& config)
 {
     config_ = config;
 }
 
-ISystemConfig ISystem::getConfig() const
+ISystemConfig 
+ISystem::getConfig() const
 {
     return config_;
 }

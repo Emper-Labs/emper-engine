@@ -2,13 +2,15 @@
 
 namespace emper::simulation::world
 {
-    
-std::size_t World::objectCount() const
+
+std::size_t 
+World::objectCount() const
 {
     return statistics_.objectCount;
 }
 
-const WorldStatistics& World::statistics() const
+const WorldStatistics& 
+World::statistics() const
 {
     return statistics_;
 }

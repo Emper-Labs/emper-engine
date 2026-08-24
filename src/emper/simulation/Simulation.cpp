@@ -5,27 +5,32 @@
 namespace emper
 {
 
-void Simulation::initialize()
+void 
+Simulation::initialize()
 {
     running_ = false;
 }
 
-void Simulation::start()
+void 
+Simulation::start()
 {
     running_ = true;
 }
 
-void Simulation::shutdown()
+void 
+Simulation::shutdown()
 {
     running_ = false;
 }
 
-void Simulation::update(f32 dt)
+void 
+Simulation::update(f32 dt)
 {
     systemManager_.tick(dt);
 }
 
-void Simulation::render()
+void 
+Simulation::render()
 {
     if (!renderer_)
         return;
@@ -37,33 +42,39 @@ void Simulation::render()
     renderer_->endFrame();
 }
 
-void Simulation::addSystem(ISystem& system)
+void 
+Simulation::addSystem(ISystem& system)
 {
     systemManager_.add(system);
 }
 
-void Simulation::removeSystem(ISystem& system)
+void 
+Simulation::removeSystem(ISystem& system)
 {
     systemManager_.remove(system);
 }
 
-bool Simulation::isRunning() const
+bool 
+Simulation::isRunning() const
 {
     return running_;
 }
 
-void Simulation::requestStop()
+void 
+Simulation::requestStop()
 {
     running_ = false;
 }
 
-void Simulation::tick(f32 dt)
+void 
+Simulation::tick(f32 dt)
 {
     update(dt);
     render();
 }
 
-bool Simulation::tick()
+bool 
+Simulation::tick()
 {
     if (!running_)
         return false;
@@ -87,27 +98,32 @@ bool Simulation::tick()
     return running_;
 }
 
-World& Simulation::world()
+World& 
+Simulation::world()
 {
     return world_;
 }
 
-const World& Simulation::world() const
+const 
+World& Simulation::world() const
 {
     return world_;
 }
 
-void Simulation::setRenderer(IRenderer& renderer)
+void 
+Simulation::setRenderer(IRenderer& renderer)
 {
     renderer_ = &renderer;
 }
 
-void Simulation::removeRenderer()
+void 
+Simulation::removeRenderer()
 {
     renderer_ = nullptr;
 }
 
-IRenderer* Simulation::renderer() const
+IRenderer* 
+Simulation::renderer() const
 {
     return renderer_;
 }

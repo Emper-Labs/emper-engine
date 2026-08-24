@@ -14,7 +14,8 @@ they should be separated to avoid creating a "God Class."
 */
 namespace emper::simulation::system
 {
-using namespace emper::interfaces::module;
+using emper::interfaces::module::ISystem;
+using emper::interfaces::backend::IRenderer;
 
 class SystemManager
 {
@@ -23,7 +24,7 @@ public:
     void remove(ISystem& system);
 
     void tick(f32 dt);
-    void render(interfaces::backend::IRenderer& renderer);
+    void render(IRenderer& renderer);
 
 private:
     std::vector<ISystem*> systems_;

@@ -88,8 +88,8 @@ public:
 
     // Current drawable surface dimensions. Defaults to 0 so headless/
     // mock renderers compile without overriding them.
-    virtual int windowWidth() const;
-    virtual int windowHeight() const;
+    virtual i32 windowWidth() const;
+    virtual i32 windowHeight() const;
 };
 } // namespace emper::interfaces::backend
 

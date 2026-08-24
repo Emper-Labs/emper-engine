@@ -2,10 +2,9 @@
 
 namespace emper::simulation::system
 {
-using namespace emper::interfaces::module;
-using namespace emper::interfaces::behavior;
+using emper::interfaces::behavior::IRenderable;
 
-void 
+void
 SystemManager::tick(f32 dt){
     for(auto* system : systems_){
         system->tick(dt);
@@ -14,8 +13,10 @@ SystemManager::tick(f32 dt){
 }
 
 void 
-SystemManager::render(interfaces::backend::IRenderer& renderer){
-    for (auto&system : systems_){ 
+SystemManager::render(IRenderer& renderer)
+{
+    for (auto* system : systems_)
+    {
         if (auto* renderable = dynamic_cast<IRenderable*>(system))
         {
             renderable->render(renderer);
