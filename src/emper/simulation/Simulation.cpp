@@ -22,7 +22,7 @@ void Simulation::shutdown()
 
 void Simulation::update(f32 dt)
 {
-    world_.tick(dt);
+    systemManager_.tick(dt);
 }
 
 void Simulation::render()
@@ -31,8 +31,20 @@ void Simulation::render()
         return;
 
     renderer_->beginFrame();
-    world_.render(*renderer_);
+
+    systemManager_.render(*renderer_);
+
     renderer_->endFrame();
+}
+
+void Simulation::addSystem(ISystem& system)
+{
+    systemManager_.add(system);
+}
+
+void Simulation::removeSystem(ISystem& system)
+{
+    systemManager_.remove(system);
 }
 
 bool Simulation::isRunning() const
@@ -54,9 +66,7 @@ void Simulation::tick(f32 dt)
 bool Simulation::tick()
 {
     if (!running_)
-    {
         return false;
-    }
 
     if (renderer_ && !renderer_->processEvents())
     {
@@ -65,30 +75,39 @@ bool Simulation::tick()
     }
 
     const f32 dt = renderer_
-        ? std::clamp(renderer_->frameDeltaSeconds(), 0.0f, 0.05f)
+        ? std::clamp(
+            renderer_->frameDeltaSeconds(),
+            0.0f,
+            0.05f
+        )
         : 1.0f / 60.0f;
 
     tick(dt);
+
     return running_;
 }
 
-emper::simulation::world::World& Simulation::world()
+World& Simulation::world()
 {
     return world_;
 }
 
-const emper::simulation::world::World& Simulation::world() const
+const World& Simulation::world() const
 {
     return world_;
 }
 
-void Simulation::setRenderer(emper::interfaces::backend::IRenderer* renderer)
+void Simulation::setRenderer(IRenderer& renderer)
 {
-    renderer_ = renderer;
-    world_.setRenderer(renderer);
+    renderer_ = &renderer;
 }
 
-emper::interfaces::backend::IRenderer* Simulation::renderer() const
+void Simulation::removeRenderer()
+{
+    renderer_ = nullptr;
+}
+
+IRenderer* Simulation::renderer() const
 {
     return renderer_;
 }

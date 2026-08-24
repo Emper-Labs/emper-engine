@@ -1,7 +1,6 @@
 #ifndef EMPER_INTERFACES_BACKEND_IRENDERER
 #define EMPER_INTERFACES_BACKEND_IRENDERER
 
-#define GPU_BACK_END
 #include <emper/ComputeTypes.h>
 
 namespace emper::interfaces::backend {
@@ -10,6 +9,7 @@ class IRenderer;
 
 namespace emper::interfaces::behavior{
 
+// for systems
 class IRenderable
 {
 public:

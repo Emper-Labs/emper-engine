@@ -1,5 +1,4 @@
 #include <emper/interfaces/backend/IRenderer.h>
-
 namespace emper::interfaces::backend {
 
 f32 IRenderer::frameDeltaSeconds()
@@ -9,8 +8,6 @@ f32 IRenderer::frameDeltaSeconds()
 
 int IRenderer::windowWidth() const
 {
-    // Defaults to 0 so headless / mock renderers compile without
-    // overriding these methods.
     return 0;
 }
 
