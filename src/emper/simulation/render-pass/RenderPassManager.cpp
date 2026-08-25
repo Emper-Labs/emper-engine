@@ -17,16 +17,16 @@ RenderPassManager::render(
 }
 
 void
-RenderPassManager::add(IRenderPass& render_pass)
+RenderPassManager::add(IRenderPass& renderPass)
 {
-    render_passes_.push_back(&render_pass);
+    render_passes_.push_back(&renderPass);
 }
 
 void
-RenderPassManager::remove(IRenderPass& render_pass)
+RenderPassManager::remove(IRenderPass& renderPass)
 {
 #if (defined(_MSVC_LANG) && _MSVC_LANG >= 202002L) || (__cplusplus >= 202002L)
-    std::erase(render_passes_, &render_pass);
+    std::erase(render_passes_, &renderPass);
 #else
     render_passes_.erase(
         std::remove(

@@ -2,8 +2,9 @@
 
 #include <algorithm>
 
-namespace emper
+namespace emper::simulation
 {
+using emper::interfaces::render_pass::RenderPassContext;
 
 void 
 Simulation::initialize()
@@ -38,6 +39,14 @@ Simulation::render()
     renderer_->beginFrame();
 
     systemManager_.render(*renderer_);
+    
+    RenderPassContext context{
+        .renderer = *renderer_,
+        .fps = statistic_.fps,
+        .deltaTime = statistic_.deltaTime
+    };
+
+    renderPassManager_.render(context);
 
     renderer_->endFrame();
 }
@@ -54,6 +63,17 @@ Simulation::removeSystem(ISystem& system)
     systemManager_.remove(system);
 }
 
+void 
+Simulation::addRenderPass(IRenderPass& renderPass){
+    renderPassManager_.add(renderPass);
+}
+
+void 
+Simulation::removeRenderPass(IRenderPass& renderPass){
+    renderPassManager_.remove(renderPass);
+}
+
+
 bool 
 Simulation::isRunning() const
 {
@@ -69,6 +89,21 @@ Simulation::requestStop()
 void 
 Simulation::tick(f32 dt)
 {
+    statistic_.deltaTime = dt;
+
+    statistic_.fpsAccumulator += dt;
+    ++statistic_.fpsFrameCount;
+
+    if (statistic_.fpsAccumulator >= 1.0f)
+    {
+        statistic_.fps =
+            static_cast<f32>(statistic_.fpsFrameCount) /
+            statistic_.fpsAccumulator;
+
+        statistic_.fpsAccumulator = 0.0f;
+        statistic_.fpsFrameCount = 0;
+    }
+
     update(dt);
     render();
 }

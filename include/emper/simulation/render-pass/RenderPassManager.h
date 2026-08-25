@@ -13,8 +13,8 @@ using emper::interfaces::render_pass::RenderPassContext;
 class RenderPassManager
 {
 public:
-    void add(IRenderPass& render_pass);
-    void remove(IRenderPass& render_pass);
+    void add(IRenderPass& renderPass);
+    void remove(IRenderPass& renderPass);
 
     void render(RenderPassContext& context);
 
