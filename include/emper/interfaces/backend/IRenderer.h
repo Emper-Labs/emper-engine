@@ -2,6 +2,7 @@
 #define EMPER_INTERFACES_BACKEND_IRENDERER
 
 #include <emper/ComputeTypes.h>
+#include <functional>
 
 namespace emper::interfaces::backend {
 class IRenderer;
@@ -18,6 +19,18 @@ public:
     virtual void render(
         emper::interfaces::backend::IRenderer& renderer
     ) = 0;
+};
+
+class INativeEventSource
+{
+public:
+    using EventCallback =
+        std::function<void(const void*)>;
+
+    virtual ~INativeEventSource() = default;
+
+    virtual void setEventCallback(
+        EventCallback callback) = 0;
 };
 
 };
