@@ -45,4 +45,22 @@ SystemManager::remove(ISystem& system)
 
 }
 
+void
+SystemManager::initialize()
+{
+    for (auto* system : systems_)
+    {
+        system->initialize();
+    }
+};
+
+
+void SystemManager::shutdown()
+{
+    for (auto* system : systems_)
+    {
+        system->shutdown();
+    }
+};
+
 }

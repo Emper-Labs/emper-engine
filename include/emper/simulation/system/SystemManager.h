@@ -23,9 +23,11 @@ public:
     void add(ISystem& system);
     void remove(ISystem& system);
 
+    void initialize();
     void tick(f32 dt);
     void render(IRenderer& renderer);
-
+    void shutdown();
+    
 private:
     std::vector<ISystem*> systems_;
 };

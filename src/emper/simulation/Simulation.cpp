@@ -16,12 +16,14 @@ void
 Simulation::start()
 {
     running_ = true;
+    systemManager_.initialize();
 }
 
 void 
 Simulation::shutdown()
 {
     running_ = false;
+    systemManager_.shutdown();
 }
 
 void 

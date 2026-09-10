@@ -24,7 +24,9 @@ public:
     void setConfig(const ISystemConfig& config);
     ISystemConfig getConfig() const;
 
-    virtual void tick(f32 dt) = 0;
+    virtual void initialize() = 0;//  init res,load shaders, etc 
+    virtual void tick(f32 dt) = 0;//  update state, run compute, etc
+    virtual void shutdown() = 0;//  free res, unload shaders, etc
 };
 
 };// namespace emper::interfaces::module
