@@ -24,6 +24,9 @@ public:
     void setConfig(const ISystemConfig& config);
     ISystemConfig getConfig() const;
 
+    //can need this to query the system capabilities, like if it supports GPU compute or not :)) i forgot this
+    //virtual SystemCapabilities capabilities() const = 0;
+
     virtual void initialize() = 0;//  init res,load shaders, etc 
     virtual void tick(f32 dt) = 0;//  update state, run compute, etc
     virtual void shutdown() = 0;//  free res, unload shaders, etc
